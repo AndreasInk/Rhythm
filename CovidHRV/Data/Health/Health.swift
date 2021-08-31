@@ -536,6 +536,9 @@ class Health: ObservableObject {
             let filteredToSteps = filteredToNight.filter {
                 return $0.title == HKQuantityTypeIdentifier.stepCount.rawValue
             }
+                let filteredToR = filteredToNight.filter {
+                    return $0.title == HKQuantityTypeIdentifier.respiratoryRate.rawValue
+                }
             let filteredToMoreThanZeroSteps = filteredToSteps.filter {
                 return $0.data != 0
             }
@@ -557,8 +560,8 @@ class Health: ObservableObject {
             }
                 heartRates = []
                // print(filteredToDay)
-           
-                if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
+                if !filteredToMoreThanZeroSteps.map({$0.date.get(.hour)}).contains((filteredToDay.last?.date ?? Date()).get(.hour)) {
+                    if filteredToR.map({$0.date.get(.hour)}).contains((filteredToDay.last?.date ?? Date()).get(.hour)) {
                     if !filteredToDay.isEmpty {
                       //  print(filteredToDay.last?.date.get(.day) == day)
                         #warning("Change back")
@@ -574,6 +577,7 @@ class Health: ObservableObject {
                     }
                 
             }
+                }
               //  if !heartRates.isEmpty {
                     let average = average(numbers: heartRates)
                 if !average.isNaN {
