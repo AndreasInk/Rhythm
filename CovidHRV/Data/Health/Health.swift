@@ -27,7 +27,7 @@ class Health: ObservableObject {
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
     init() {
        
-       // backgroundDelivery()
+        backgroundDelivery()
     }
     func backgroundDelivery() {
         let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
@@ -46,7 +46,7 @@ class Health: ObservableObject {
                         self.getHealthData(type: type, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
                         }
                     }
-                            self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
+                self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { [self] value in
 //                            let filtered = self.codableRisk.filter {
 //                                return $0.risk > 0
 //                            }
@@ -56,12 +56,23 @@ class Health: ObservableObject {
                             
                             let riskScore = self.getRiskScore(bedTime: 20, wakeUpTime: 4, data: value).0.risk
                             if  riskScore > 0.5 && riskScore != 21.0 {
+                                print("RISK DAYS")
+                                print(codableRisk[codableRisk.count - 2].date.get(.day) + 1)
+                                print(codableRisk.last?.date.get(.day))
+                                if self.codableRisk.indices.contains(codableRisk.count - 2) {
+                                    if (codableRisk[codableRisk.count - 2]).risk > 0.5 {
+                                        if codableRisk[codableRisk.count - 2].date.get(.day) + 1 == codableRisk.last?.date.get(.day) ?? 0 {
+                                            
+                                       
+                                
                                 LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
                                     Today()
                                         .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
                                         .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick")
-                                
+                                }
+                                }
                             }
+                                }
         //            print(self.average(numbers: self.codableRisk.map{$0.risk}))
                 //}
                             }

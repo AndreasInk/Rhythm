@@ -8,10 +8,10 @@
 import SwiftUI
 import HealthKit
 import NiceNotifications
-import TabularData
+//import TabularData
 struct ContentView: View {
     @StateObject var health = Health()
-    @StateObject var ml = ML()
+    //@StateObject var ml = ML()
     @State var share = false
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
     var body: some View {
@@ -22,30 +22,28 @@ struct ContentView: View {
         HomeView(health: health)//, ml: ml)
         
             .onAppear() {
-                do {
-                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
-                ml.importCSV(data: df) { data in
-                    health.healthData = data
-                    let risk = health.getRiskScoreAll(bedTime: 6, wakeUpTime: 10, data: data)
-                    //print(risk.1)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                        let filtered = risk.1.filter {
-                        return $0.risk != 0 && $0.risk != 21
-                    }
-                    //print(health.codableRisk.count)
-                        print(filtered.count)
-                    }
-                }
-                } catch {
+//                do {
+//                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
+//                ml.importCSV(data: df) { data in
+//                    health.healthData = data
+//                    let risk = health.getRiskScoreAll(bedTime: 6, wakeUpTime: 10, data: data)
+//                    //print(risk.1)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+//                        let filtered = risk.1.filter {
+//                        return $0.risk != 0 && $0.risk != 21
+//                    }
+//                    //print(health.codableRisk.count)
+//                        print(filtered.count)
+//                    }
+//                }
+//                } catch {
                     
-                }
+                //}
                 LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
                 }
                 let readData = Set([
-                    HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
+//                    HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
                     HKCategoryType(.sleepAnalysis),
-                    HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
-                    HKObjectType.quantityType(forIdentifier: .walkingHeartRateAverage)!,
                     HKObjectType.quantityType(forIdentifier: .heartRate)!,
                     HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
                     HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
