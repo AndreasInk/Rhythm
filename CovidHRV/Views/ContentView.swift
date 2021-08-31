@@ -8,10 +8,10 @@
 import SwiftUI
 import HealthKit
 import NiceNotifications
-//import TabularData
+import TabularData
 struct ContentView: View {
     @StateObject var health = Health()
-   // @StateObject var ml = ML()
+    @StateObject var ml = ML()
     @State var share = false
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
     var body: some View {
@@ -23,19 +23,19 @@ struct ContentView: View {
         
             .onAppear() {
                 do {
-//                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
-//                ml.importCSV(data: df) { data in
-//                    health.healthData = data
-//                    let risk = health.getRiskScore(bedTime: 0, wakeUpTime: 4, data: data)
-//                    //print(risk.1)
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-//                        let filtered = risk.1.filter {
-//                        return $0.risk != 0 && $0.risk != 21
-//                    }
-//                    //print(health.codableRisk.count)
-//                        print(filtered.count)
-//                    }
-//                }
+                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
+                ml.importCSV(data: df) { data in
+                    health.healthData = data
+                    let risk = health.getRiskScoreAll(bedTime: 6, wakeUpTime: 10, data: data)
+                    //print(risk.1)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                        let filtered = risk.1.filter {
+                        return $0.risk != 0 && $0.risk != 21
+                    }
+                    //print(health.codableRisk.count)
+                        print(filtered.count)
+                    }
+                }
                 } catch {
                     
                 }

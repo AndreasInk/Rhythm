@@ -98,7 +98,7 @@ struct HalvedCircularBar: View {
                 
                 Circle()
                     .trim(from: 0.0, to: 0.705)
-                    .stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
+                    .stroke(Color(progress > 0.8 ? "lightRed" : "green"), lineWidth: 20)
                     .opacity(0.4)
                     .frame(width: 200, height: 200)
                     .rotationEffect(Angle(degrees: -215))
