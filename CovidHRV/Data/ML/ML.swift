@@ -12,6 +12,7 @@ import CoreML
 import CreateML
 import TabularData
 import HealthKit
+@available(iOS 15, *)
 class ML: ObservableObject {
     @Published var mlData = ModelResponse(type: "", predicted: [Double](), actual: [Double](), accuracy: 0.0)
     

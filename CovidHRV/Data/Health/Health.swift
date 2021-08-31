@@ -43,10 +43,10 @@ class Health: ObservableObject {
                         //self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 7 : 30, endDate: Date()) { value in
                   
                     for type in self.readData {
-                        self.getHealthData(type: type, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
+                        self.getHealthData(type: type, dateDistanceType: .Week, dateDistance: self.onboarding ? 24 : 24, endDate: Date()) { value in
                         }
                     }
-                self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { [self] value in
+                self.getHealthData(type: .heartRate, dateDistanceType: .Month, dateDistance: self.onboarding ? 24 : 24, endDate: Date()) { [self] value in
 //                            let filtered = self.codableRisk.filter {
 //                                return $0.risk > 0
 //                            }
@@ -54,11 +54,12 @@ class Health: ObservableObject {
                            
                             //let riskScore = self.getRiskScore(bedTime: sleepingHours.max() ?? 0, wakeUpTime: sleepingHours.min() ?? 0, data: value).0.risk
                             
-                            let riskScore = self.getRiskScore(bedTime: 20, wakeUpTime: 4, data: value).0.risk
+                            let riskScore = self.getRiskScoreAll(bedTime: 0, wakeUpTime: 4, data: value).0.risk
+                    print()
                             if  riskScore > 0.5 && riskScore != 21.0 {
-                                print("RISK DAYS")
-                                print(codableRisk[codableRisk.count - 2].date.get(.day) + 1)
-                                print(codableRisk.last?.date.get(.day))
+//                                print("RISK DAYS")
+//                                print(codableRisk[codableRisk.count - 2].date.get(.day) + 1)
+//                                print(codableRisk.last?.date.get(.day))
                                 if self.codableRisk.indices.contains(codableRisk.count - 2) {
                                     if (codableRisk[codableRisk.count - 2]).risk > 0.5 {
                                         if codableRisk[codableRisk.count - 2].date.get(.day) + 1 == codableRisk.last?.date.get(.day) ?? 0 {
@@ -368,6 +369,7 @@ class Health: ObservableObject {
                 let filteredToNight = healthData.filter {
                     return ($0.date.get(.hour) > bedTime && $0.date.get(.hour) < 24) || ($0.date.get(.hour) < wakeUpTime && $0.date.get(.hour) > 0)
                 }
+                    
                 let filteredToHeartRate = filteredToNight.filter {
                     return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue
                 }
@@ -410,7 +412,7 @@ class Health: ObservableObject {
                     rRates = []
                     heartRates = []
                         // print(filteredToDay)
-                    if !filteredToDayR.isEmpty {
+                    if !filteredToDayR.indices.contains(1) {
                     if Date().get(.day) == day {
                         todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                     } else {
@@ -420,7 +422,7 @@ class Health: ObservableObject {
                     }
                     if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
                         
-                        if !filteredToDay.isEmpty {
+                        if !filteredToDay.indices.contains(1) {
                             if Date().get(.day) == day {
 //                                todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                                 todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
@@ -451,10 +453,11 @@ class Health: ObservableObject {
                 }
                print("averageHRPerNight")
                print(averageHRPerNight)
-                    if !averageHRPerNight.isEmpty {
+                    //if !averageHRPerNight.isEmpty {
+                        if !averageHRPerNight.indices.contains(1) {
                 medianHeartrate = averageHRPerNight.median()
                     }
-                        if !averageRPerNight.isEmpty {
+                    if !averageRPerNight.indices.contains(1) {
                         medianRrate = averageRPerNight.median()
                         medianOrate = averageOPerNight.median()
                     }
@@ -468,7 +471,7 @@ class Health: ObservableObject {
                     
                     print("AVG R")
                     print(average(numbers: todayRRates))
-                    if medianRrate + 3 < average(numbers: todayRRates) {
+                    if medianRrate * 1.35  < average(numbers: todayRRates) {
                         riskScore += 1.0
                     }
                  

@@ -12,7 +12,7 @@ struct CardView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 25.0)
-                .foregroundColor(Color(uiColor: .systemGroupedBackground))
+                .foregroundColor(Color(UIColor.systemGroupedBackground))
                // .frame(width: .infinity)
             HStack {
                 Image(card.image)

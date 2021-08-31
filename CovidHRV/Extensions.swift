@@ -60,10 +60,14 @@ extension Array where Element:Equatable {
 extension Array where Element == Double {
     func median() -> Double {
         let sortedArray = sorted()
+        if self.indices.contains(1) {
         if count % 2 != 0 {
             return Double(sortedArray[count / 2])
         } else {
             return Double(sortedArray[count / 2] + sortedArray[count / 2 - 1]) / 2.0
+        }
+        } else {
+            return 21.0
         }
     }
 }

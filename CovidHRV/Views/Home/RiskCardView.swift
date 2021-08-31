@@ -47,7 +47,7 @@ struct RiskCardView: View {
                 
             if explain {
                 ZStack {
-                    Color(uiColor: .systemBackground)
+                    Color(UIColor.systemBackground)
                     VStack {
                 //LazyVGrid(columns: [GridItem(), GridItem()]) {
                         VStack {

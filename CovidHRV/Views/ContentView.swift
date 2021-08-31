@@ -43,7 +43,7 @@ struct ContentView: View {
                 }
                 let readData = Set([
 //                    HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
-                    HKCategoryType(.sleepAnalysis),
+                   // HKCategoryType(.sleepAnalysis),
                     HKObjectType.quantityType(forIdentifier: .heartRate)!,
                     HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
                     HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
