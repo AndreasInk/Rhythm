@@ -462,7 +462,7 @@ class Health: ObservableObject {
                         medianOrate = averageOPerNight.median()
                     }
                 
-                    var riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1.0 : 0.0
+                    var riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 4 ? 1.0 : 0.0
 //                    if medianOrate > average(numbers: todayORates) {
 //                        riskScore += 0.5
 //                    }
