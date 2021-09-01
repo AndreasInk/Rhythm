@@ -54,7 +54,7 @@ class Health: ObservableObject {
                            
                             //let riskScore = self.getRiskScore(bedTime: sleepingHours.max() ?? 0, wakeUpTime: sleepingHours.min() ?? 0, data: value).0.risk
                             
-                            let riskScore = self.getRiskScoreAll(bedTime: 0, wakeUpTime: 4, data: value).0.risk
+                            let riskScore = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value).0.risk
                     print()
                             if  riskScore > 0.5 && riskScore != 21.0 {
 //                                print("RISK DAYS")
@@ -471,7 +471,7 @@ class Health: ObservableObject {
                     
                     print("AVG R")
                     print(average(numbers: todayRRates))
-                    if medianRrate * 1.35  < average(numbers: todayRRates) {
+                    if medianRrate * 1.6  < average(numbers: todayRRates) {
                         riskScore += 1.0
                     }
                  
