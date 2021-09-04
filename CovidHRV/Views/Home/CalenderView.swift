@@ -21,7 +21,7 @@ fileprivate extension DateFormatter {
     }
 }
 
-fileprivate extension Calendar {
+ extension Calendar {
     func generateDates(
         inside interval: DateInterval,
         matching components: DateComponents
@@ -73,12 +73,19 @@ struct CalendarView<DateView>: View where DateView: View {
                 Section(header: header(for: month)) {
                     ForEach(days(for: month), id: \.self) { date in
                         if calendar.isDate(date, equalTo: month, toGranularity: .month) {
+                            Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
+                                
                             content(date).id(date)
                                 .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
+                            }
                             
                         } else {
+                            Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
                             content(date).hidden()
                                 .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
+                                
+                            }
+                            
                         }
                            
                     }
@@ -88,6 +95,8 @@ struct CalendarView<DateView>: View where DateView: View {
             }
         }
             }
+            Spacer()
+                
     }
     }
     private var months: [Date] {

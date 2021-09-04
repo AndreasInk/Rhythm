@@ -11,7 +11,7 @@ struct CardView: View {
     @State var card: Card
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 25.0)
+            RoundedRectangle(cornerRadius: 10.0)
                 .foregroundColor(Color(UIColor.systemGroupedBackground))
                // .frame(width: .infinity)
             HStack {

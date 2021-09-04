@@ -40,7 +40,7 @@ struct RiskCardView: View {
             }
             
         HalvedCircularBar(progress: $health.risk.risk, min: $min, max: $max)
-                .padding(.top)
+               
             
                 
                
@@ -96,34 +96,36 @@ struct HalvedCircularBar: View {
             if progress != 21 {
             ZStack {
                 
-                Circle()
-                    .trim(from: 0.0, to: 0.705)
-                    .stroke(Color(progress > 0.8 ? "lightRed" : "green"), lineWidth: 20)
-                    .opacity(0.4)
-                    .frame(width: 200, height: 200)
-                    .rotationEffect(Angle(degrees: -215))
-                Circle()
-                    .trim(from: min, to: max)
-                    .stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
-                    .frame(width: 200, height: 200)
-                    .rotationEffect(Angle(degrees: -215))
+                RoundedRectangle(cornerRadius: 10)
+                    .trim(from: 0.0, to: 1.0)
+                    .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
+                    //.stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
+                    .opacity(0.8)
+                    .frame( height: 125)
+                    .padding(.vertical)
+                    //.rotationEffect(Angle(degrees: -215))
+//                Circle()
+//                    .trim(from: min, to: max)
+//                    .stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
+//                    .frame(width: 200, height: 200)
+//                    .rotationEffect(Angle(degrees: -215))
                
                 Text(progress == 21 ? "Not Enough Data" : progress > 0.5 ? "WARNING" : "OK")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
-                    .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
-                
-                VStack {
-                    Spacer()
-                    HStack {
-                        Text("0")
-                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
-                        Spacer()
-                        Text("100")
-                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
-                   
-                    } .padding(.horizontal, 105)
-                    
-                } .padding(.bottom)
+                   // .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
+                    .foregroundColor(.white)
+//                VStack {
+//                    Spacer()
+//                    HStack {
+//                        Text("0")
+//                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
+//                        Spacer()
+//                        Text("100")
+//                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
+//
+//                    } .padding(.horizontal, 105)
+//
+//                } .padding(.bottom)
                 
             } .onAppear() {
                 
