@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		E138363626DD89C200B87F88 /* P355472-AppleWatch-hr.csv in Resources */ = {isa = PBXBuildFile; fileRef = E138363526DD89C200B87F88 /* P355472-AppleWatch-hr.csv */; };
+		E158010A26E2EB7A002D519E /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158010926E2EB7A002D519E /* IntroView.swift */; };
+		E158010C26E2F898002D519E /* DataViewv2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158010B26E2F897002D519E /* DataViewv2.swift */; };
+		E158010E26E2FBD5002D519E /* CalenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158010D26E2FBD5002D519E /* CalenderView.swift */; };
 		E18A600C26D063B300F43372 /* DataTypesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A600B26D063B300F43372 /* DataTypesListView.swift */; };
 		E18A600E26D1591400F43372 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1E044E326CCF22B0024A12B /* HealthKit.framework */; };
 		E1C313FD26CD8DD1008879FD /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C313FC26CD8DD1008879FD /* ShareSheet.swift */; };
@@ -125,6 +128,9 @@
 
 /* Begin PBXFileReference section */
 		E138363526DD89C200B87F88 /* P355472-AppleWatch-hr.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "P355472-AppleWatch-hr.csv"; sourceTree = "<group>"; };
+		E158010926E2EB7A002D519E /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
+		E158010B26E2F897002D519E /* DataViewv2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewv2.swift; sourceTree = "<group>"; };
+		E158010D26E2FBD5002D519E /* CalenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalenderView.swift; sourceTree = "<group>"; };
 		E18A600B26D063B300F43372 /* DataTypesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypesListView.swift; sourceTree = "<group>"; };
 		E1C313FC26CD8DD1008879FD /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		E1E0442D26CC74FB0024A12B /* CovidHRV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CovidHRV.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -344,6 +350,7 @@
 			children = (
 				E1E0448526CCDF830024A12B /* SwiftUICharts  */,
 				E1E0443226CC74FB0024A12B /* ContentView.swift */,
+				E158010926E2EB7A002D519E /* IntroView.swift */,
 				E18A600D26D063B700F43372 /* Onboarding */,
 				E1E0448026CC82880024A12B /* Home */,
 				E1E044B626CCEA2A0024A12B /* ButtonStyles */,
@@ -359,6 +366,8 @@
 				E1E0448326CCDD1F0024A12B /* FeelingScoreView.swift */,
 				E1E044B026CCE43C0024A12B /* CardView.swift */,
 				E1E044E826CD58680024A12B /* DataView.swift */,
+				E158010B26E2F897002D519E /* DataViewv2.swift */,
+				E158010D26E2FBD5002D519E /* CalenderView.swift */,
 				E1C313FC26CD8DD1008879FD /* ShareSheet.swift */,
 			);
 			path = Home;
@@ -624,13 +633,16 @@
 				E1C313FD26CD8DD1008879FD /* ShareSheet.swift in Sources */,
 				E1E044B826CCEDC10024A12B /* RiskCardView.swift in Sources */,
 				E1E044A726CCDF830024A12B /* Legend.swift in Sources */,
+				E158010E26E2FBD5002D519E /* CalenderView.swift in Sources */,
 				E1E0447C26CC7A980024A12B /* Onboarding.swift in Sources */,
 				E1E044B126CCE43C0024A12B /* CardView.swift in Sources */,
 				E1E044AC26CCDF830024A12B /* Line.swift in Sources */,
+				E158010A26E2EB7A002D519E /* IntroView.swift in Sources */,
 				E1E044B526CCEA260024A12B /* CTAButtonStyle.swift in Sources */,
 				E1E044AB26CCDF830024A12B /* MultiLineChartView.swift in Sources */,
 				E1E0449E26CCDF830024A12B /* BarChartCell.swift in Sources */,
 				E1E0446A26CC75EF0024A12B /* Health.swift in Sources */,
+				E158010C26E2F898002D519E /* DataViewv2.swift in Sources */,
 				E1E044AA26CCDF830024A12B /* Path+QuadCurve.swift in Sources */,
 				E1E044E926CD58680024A12B /* DataView.swift in Sources */,
 				E1E0449C26CCDF830024A12B /* BarChartRow.swift in Sources */,

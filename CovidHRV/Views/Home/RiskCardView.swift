@@ -17,7 +17,7 @@ struct RiskCardView: View {
     var body: some View {
         VStack {
             HStack {
-                NavigationLink(destination: DataView(health: health)) {
+                NavigationLink(destination: DataViewv2(health: health)) {
                  
                     Image(systemSymbol: .chartBar)
                         .font(.title)
@@ -108,7 +108,7 @@ struct HalvedCircularBar: View {
                     .frame(width: 200, height: 200)
                     .rotationEffect(Angle(degrees: -215))
                
-                Text(progress == 21 ? "Not Enough Data" : "\(Int((self.progress)*100))%")
+                Text(progress == 21 ? "Not Enough Data" : progress > 0.5 ? "WARNING" : "OK")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
                     .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
                 

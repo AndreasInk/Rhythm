@@ -13,14 +13,30 @@ struct ContentView: View {
     @StateObject var health = Health()
     //@StateObject var ml = ML()
     @State var share = false
+    @State var intro = true
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
     var body: some View {
+        ZStack {
+            Color.clear
+                .onAppear() {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        withAnimation(.easeInOut(duration: 2.0)) {
+                    intro = false
+                        }
+                    }
+                }
+            
+        
         if !onboarding {
             OnboardingView(isOnboarding: $onboarding, isOnboarding2: $onboarding)
             
         } else {
+            if !intro {
         HomeView(health: health)//, ml: ml)
-        
+                .transition(.opacity)
+                .onAppear() {
+                   
+                }
             .onAppear() {
 //                do {
 //                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
@@ -108,8 +124,12 @@ struct ContentView: View {
                // ShareSheet(activityItems: [ml.getDocumentsDirectory().appendingPathComponent("A.csv")])
                 
             }
+            }
     }
-           
+            if intro {
+        IntroView()
+            }
+        }
     }
 }
 

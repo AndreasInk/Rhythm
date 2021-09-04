@@ -81,7 +81,7 @@ struct DataView: View {
             }  //.opacity(isTutorial ? (tutorialNum == 2 ? 1.0 : 0.1) : 1.0)
             
                 
-            BarChartView(data: $data, title: "Covid Risk Score")
+           // BarChartView(data: $data, title: "Covid Risk Score")
 //            Text("1 indicates poorer health while a 0 indicates a healthier condition")
 //                .fixedSize(horizontal: false, vertical: true)
 //                .multilineTextAlignment(.leading)
