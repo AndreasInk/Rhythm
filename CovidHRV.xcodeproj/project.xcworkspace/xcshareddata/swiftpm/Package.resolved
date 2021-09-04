@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "HKCombine",
+        "repositoryURL": "https://github.com/javierdemartin/HKCombine.git",
+        "state": {
+          "branch": "main",
+          "revision": "fef1eb3a08831bb5c2a4f452b7b502260edc69a9",
+          "version": null
+        }
+      },
+      {
         "package": "NiceNotifications",
         "repositoryURL": "https://github.com/nicephoton/NiceNotifications.git",
         "state": {

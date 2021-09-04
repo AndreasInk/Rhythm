@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E138363626DD89C200B87F88 /* P355472-AppleWatch-hr.csv in Resources */ = {isa = PBXBuildFile; fileRef = E138363526DD89C200B87F88 /* P355472-AppleWatch-hr.csv */; };
+		E13BC21C26E33A890044C362 /* HKCombine in Frameworks */ = {isa = PBXBuildFile; productRef = E13BC21B26E33A890044C362 /* HKCombine */; };
 		E158010A26E2EB7A002D519E /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158010926E2EB7A002D519E /* IntroView.swift */; };
 		E158010C26E2F898002D519E /* DataViewv2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158010B26E2F897002D519E /* DataViewv2.swift */; };
 		E158010E26E2FBD5002D519E /* CalenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158010D26E2FBD5002D519E /* CalenderView.swift */; };
@@ -213,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E18A600E26D1591400F43372 /* HealthKit.framework in Frameworks */,
+				E13BC21C26E33A890044C362 /* HKCombine in Frameworks */,
 				E1E044E726CD3C420024A12B /* SFSafeSymbols in Frameworks */,
 				E1E0447F26CC7CD30024A12B /* NiceNotifications in Frameworks */,
 			);
@@ -485,6 +487,7 @@
 			packageProductDependencies = (
 				E1E0447E26CC7CD30024A12B /* NiceNotifications */,
 				E1E044E626CD3C420024A12B /* SFSafeSymbols */,
+				E13BC21B26E33A890044C362 /* HKCombine */,
 			);
 			productName = CovidHRV;
 			productReference = E1E0442D26CC74FB0024A12B /* CovidHRV.app */;
@@ -557,6 +560,7 @@
 			packageReferences = (
 				E1E0447D26CC7CD30024A12B /* XCRemoteSwiftPackageReference "NiceNotifications" */,
 				E1E044E526CD3C420024A12B /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+				E13BC21A26E33A890044C362 /* XCRemoteSwiftPackageReference "HKCombine" */,
 			);
 			productRefGroup = E1E0442E26CC74FB0024A12B /* Products */;
 			projectDirPath = "";
@@ -819,7 +823,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CovidHRV WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "CovidHRV WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = CovidHRV_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -851,7 +855,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CovidHRV WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "CovidHRV WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = CovidHRV_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1040,6 +1044,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E13BC21A26E33A890044C362 /* XCRemoteSwiftPackageReference "HKCombine" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/javierdemartin/HKCombine.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		E1E0447D26CC7CD30024A12B /* XCRemoteSwiftPackageReference "NiceNotifications" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nicephoton/NiceNotifications.git";
@@ -1059,6 +1071,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E13BC21B26E33A890044C362 /* HKCombine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E13BC21A26E33A890044C362 /* XCRemoteSwiftPackageReference "HKCombine" */;
+			productName = HKCombine;
+		};
 		E1E0447E26CC7CD30024A12B /* NiceNotifications */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1E0447D26CC7CD30024A12B /* XCRemoteSwiftPackageReference "NiceNotifications" */;

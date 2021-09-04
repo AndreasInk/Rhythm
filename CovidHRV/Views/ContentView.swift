@@ -62,7 +62,7 @@ struct ContentView: View {
                    // HKCategoryType(.sleepAnalysis),
                     HKObjectType.quantityType(forIdentifier: .heartRate)!,
                     HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
-                    HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
+                    HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
                     HKObjectType.quantityType(forIdentifier: .stepCount)!
                 ])
                 
