@@ -139,11 +139,15 @@ class Health: ObservableObject {
             }, receiveValue: { samples in
                 // Loops thru active energy samples
                 for sample in samples {
-                    print(sample.quantity.doubleValue(for: self.calorieQuantity))
+                  
                     // If active energy is low (below 1.4 in healthkit app terms) and does not equal zero then add the heartrate data to healthData
-                    if sample.quantity.doubleValue(for: self.calorieQuantity) < 14 && sample.quantity.doubleValue(for: self.calorieQuantity) != 0.0 {
+                    if sample.startDate.get(.day) == Date().get(.day) {
+                        print(sample.quantity.doubleValue(for: self.calorieQuantity))
+                    }
+                    #warning("14 or 200?")
+                    if sample.quantity.doubleValue(for: self.calorieQuantity) < 101 && sample.quantity.doubleValue(for: self.calorieQuantity) != 0.0 {
                     self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)?.identifier ?? "", text: "", date: sample.startDate, data: sample.endDate.timeIntervalSince1970))
-                    
+                   
                     } else {
                        
                     }
@@ -186,45 +190,76 @@ class Health: ObservableObject {
         var averagePerNights = [Double]()
        
         for month in months {
-            if month.get(.month) >= Date().get(.month) - 2 && month.get(.month) <= Date().get(.month)  {
+            // If month is within 3 months in the past then proceed
+            if (month.get(.month) >= Date().get(.month) - 2 && month.get(.month) <= Date().get(.month))  {
                 
         for day in 0...32 {
+            // Filter to day and to month that's not today
             let filteredToDay = filteredToHeartRate.filter {
                 return $0.date.get(.day) == day && $0.date.get(.day) != Date().get(.day) &&  $0.date.get(.month) == month.get(.month)
             }
-            print(filteredToDay)
-            
+            // Get average for that day
             averagePerNights.append(average(numbers: filteredToDay.map{$0.data}))
         }
             }
         }
+        // Get median of the averages for each day
+        print(averagePerNights)
         let median = averagePerNights.filter{!$0.isNaN}.median()
         print("MEDIAN")
         print(median)
+        // Filter to current night
         let filteredToLastNight = filteredToHeartRate.filter {
-            return $0.date.get(.day) == Date().get(.day)
+            return $0.date.get(.day) == Date().get(.day) && $0.date.get(.month) == Date().get(.month)
         }
+        print("LAST NIGHT")
+        print(filteredToLastNight)
+        print( average(numbers: filteredToLastNight.map{$0.data}))
+        // Calculate risk
         let riskScore = average(numbers: filteredToLastNight.map{$0.data}) >= median + 4 ? 1 : 0
-        
+        // Populates explaination depending on severity of risk
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
+    // Initalize risk
     let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
   
-    if averagePerNights.count > 3 {
+    #warning("maybe increase")
+    if averagePerNights.count > 0 {
     withAnimation(.easeOut(duration: 1.3)) {
-        
+    // Populate risk var with local risk var
     self.risk = risk
+        
     }
+        let riskScore = risk.risk
+            if  riskScore > 0.5 && riskScore != 21.0 {
+               
+                                           if self.codableRisk.indices.contains(self.codableRisk.count - 2) {
+                                               if (self.codableRisk[self.codableRisk.count - 2]).risk > 0.5 {
+                                                   if self.codableRisk[self.codableRisk.count - 2].date.get(.day) + 1 == self.codableRisk.last?.date.get(.day) ?? 0 {
+
+
+                                                       LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
+                                                           Today()
+                                                               .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
+                                                               .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick")
+                                                       }
+                                         
+                                           }
+
+                                           }
+                                           }
+            }
+        // Add risk to codeableRisk
         self.codableRisk.append(CodableRisk(id: risk.id, date: Date(), risk: risk.risk, explanation: [String]()))
      
     } else {
-      
+      // If averagePerNights is empty then populate risk with 21 to indicate that
         self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
     
     }
     }
    
 
-   
+   // Gets average of input and outputs
     func average(numbers: [Double]) -> Double {
        // print(numbers)
        return Double(numbers.reduce(0,+))/Double(numbers.count)
