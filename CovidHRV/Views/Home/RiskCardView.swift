@@ -136,7 +136,9 @@ struct HalvedCircularBar: View {
             } else {
                 Text(progress == 21 ? "Not Enough Data" : "\(Int((self.progress)*100))%")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
-                    .foregroundColor(Color("red"))
+                    .foregroundColor(Color("blue"))
+                    .frame( height: 125)
+                    .padding(.vertical)
             }
         }
     }

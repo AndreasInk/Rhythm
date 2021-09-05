@@ -223,12 +223,13 @@ class Health: ObservableObject {
     let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
   
     #warning("maybe increase")
-    if averagePerNights.count > 0 {
+    if averagePerNights.count > 5 && filteredToLastNight.count > 5 {
     withAnimation(.easeOut(duration: 1.3)) {
     // Populate risk var with local risk var
     self.risk = risk
         
     }
+      
         let riskScore = risk.risk
             if  riskScore > 0.5 && riskScore != 21.0 {
                

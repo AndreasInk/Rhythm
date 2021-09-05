@@ -25,13 +25,11 @@ struct HomeView: View {
                 RiskCardView(health: health)
                         .transition(.move(edge: .top))
                 }
-//                FeelingScoreInputView(health: health)
-//                    .padding()
+
                 if !enrolled {
                     CardView(card: Card( image: "doc", title: "Learn More About Research?", description: "We can change the tide of this pandemic.", cta: "Learn More"))
                     .padding()
                 }
-                //BarChartView(data: $health.healthChartData, title: "Score", legend: "")
             }
         } .navigationTitle("")
                 .navigationBarHidden(true)

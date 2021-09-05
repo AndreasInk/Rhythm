@@ -13,7 +13,6 @@ struct CardView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 10.0)
                 .foregroundColor(Color(UIColor.systemGroupedBackground))
-               // .frame(width: .infinity)
             HStack {
                 Image(card.image)
                     .resizable()
