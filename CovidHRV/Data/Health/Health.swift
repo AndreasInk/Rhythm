@@ -63,7 +63,7 @@ class Health: ObservableObject {
                       to: data.date)
                 // Gets heartrate data from the specified dates above
                     self.getHeartRateHealthData(startDate: earlyDate ?? Date(), endDate:  lateDate ?? Date())
-
+                    self.getRespiratoryHealthData(startDate: earlyDate ?? Date(), endDate:  lateDate ?? Date())
                 }
                
                
@@ -144,7 +144,6 @@ class Health: ObservableObject {
                     if sample.startDate.get(.day) == Date().get(.day) {
                         print(sample.quantity.doubleValue(for: self.calorieQuantity))
                     }
-                    #warning("14 or 200?")
                     if sample.quantity.doubleValue(for: self.calorieQuantity) < 101 && sample.quantity.doubleValue(for: self.calorieQuantity) != 0.0 {
                     self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)?.identifier ?? "", text: "", date: sample.startDate, data: sample.endDate.timeIntervalSince1970))
                    
@@ -171,6 +170,22 @@ class Health: ObservableObject {
             // Does something, lol
             }).store(in: &cancellableBag2)
     }
+    func getRespiratoryHealthData(startDate: Date, endDate: Date) {
+
+        healthStore
+            .get(sample: HKSampleType.quantityType(forIdentifier: .respiratoryRate)!, start: startDate, end: endDate)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { subscription in
+         
+            }, receiveValue: { samples in
+         
+                // If there's smaples then add the sample to healthData
+                if samples.count > 0 {
+                self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: HKSampleType.quantityType(forIdentifier: .respiratoryRate)?.identifier ?? "", text: "", date: startDate, data: self.average(numbers: samples.map{$0.quantity.doubleValue(for: self.heartrateQuantity)})))
+                }
+            // Does something, lol
+            }).store(in: &cancellableBag2)
+    }
     // Gets all months
     @Environment(\.calendar) var calendar
     let interval = DateInterval()
@@ -187,8 +202,11 @@ class Health: ObservableObject {
         let filteredToHeartRate = healthData.filter {
             return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue && !$0.data.isNaN
         }
+        let filteredToRespiratoryRate = healthData.filter {
+            return $0.title == HKQuantityTypeIdentifier.respiratoryRate.rawValue && !$0.data.isNaN
+        }
         var averagePerNights = [Double]()
-       
+        var averagePerNightsR = [Double]()
         for month in months {
             // If month is within 3 months in the past then proceed
             if (month.get(.month) >= Date().get(.month) - 2 && month.get(.month) <= Date().get(.month))  {
@@ -198,25 +216,39 @@ class Health: ObservableObject {
             let filteredToDay = filteredToHeartRate.filter {
                 return $0.date.get(.day) == day && $0.date.get(.day) != Date().get(.day) &&  $0.date.get(.month) == month.get(.month)
             }
+            let filteredToDayR = filteredToRespiratoryRate.filter {
+                return $0.date.get(.day) == day && $0.date.get(.day) != Date().get(.day) &&  $0.date.get(.month) == month.get(.month)
+            }
             // Get average for that day
             averagePerNights.append(average(numbers: filteredToDay.map{$0.data}))
+            averagePerNightsR.append(average(numbers: filteredToDayR.map{$0.data}))
         }
             }
         }
         // Get median of the averages for each day
         print(averagePerNights)
         let median = averagePerNights.filter{!$0.isNaN}.median()
+        let medianR = averagePerNightsR.filter{!$0.isNaN}.median()
         print("MEDIAN")
         print(median)
         // Filter to current night
         let filteredToLastNight = filteredToHeartRate.filter {
             return $0.date.get(.day) == Date().get(.day) && $0.date.get(.month) == Date().get(.month)
         }
+        
+        let filteredToLastNightR = filteredToRespiratoryRate.filter {
+            return $0.date.get(.day) == Date().get(.day) && $0.date.get(.month) == Date().get(.month)
+        }
         print("LAST NIGHT")
         print(filteredToLastNight)
         print( average(numbers: filteredToLastNight.map{$0.data}))
         // Calculate risk
-        let riskScore = average(numbers: filteredToLastNight.map{$0.data}) >= median + 4 ? 1 : 0
+        let averageLastNight = average(numbers: filteredToLastNight.map{$0.data})
+        var riskScore = averageLastNight >= median + 4.0 ? 1.0 : averageLastNight >= median + 4.0 ? 0.3 : 0.0
+        // If average of last night's respiratory rate is over a certain treshold, then add to risk
+        if medianR + 3 < average(numbers: filteredToLastNightR.map{$0.data}) {
+            riskScore += 0.2
+        }
         // Populates explaination depending on severity of risk
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
     // Initalize risk
