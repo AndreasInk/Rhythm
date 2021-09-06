@@ -46,7 +46,7 @@ class Health: ObservableObject {
                   byAdding: .month,
                   value: -3,
                   to: Date())
-        // Queries active energy to determine when the user is alseep
+              // Queries active energy to determine when the user is alseep
                     self.getActiveEnergyHealthData(startDate: earlyDate ?? Date(), endDate: Date())
  
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -141,9 +141,7 @@ class Health: ObservableObject {
                 for sample in samples {
                   
                     // If active energy is low (below 1.4 in healthkit app terms) and does not equal zero then add the heartrate data to healthData
-                    if sample.startDate.get(.day) == Date().get(.day) {
-                        print(sample.quantity.doubleValue(for: self.calorieQuantity))
-                    }
+                    
                     if sample.quantity.doubleValue(for: self.calorieQuantity) < 101 && sample.quantity.doubleValue(for: self.calorieQuantity) != 0.0 {
                     self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)?.identifier ?? "", text: "", date: sample.startDate, data: sample.endDate.timeIntervalSince1970))
                    
@@ -232,6 +230,7 @@ class Health: ObservableObject {
         print("MEDIAN")
         print(median)
         // Filter to current night
+        #warning("If new month could cause an issue")
         let filteredToLastNight = filteredToHeartRate.filter {
             return $0.date.get(.day) == Date().get(.day) && $0.date.get(.month) == Date().get(.month)
         }
@@ -244,9 +243,10 @@ class Health: ObservableObject {
         print( average(numbers: filteredToLastNight.map{$0.data}))
         // Calculate risk
         let averageLastNight = average(numbers: filteredToLastNight.map{$0.data})
-        var riskScore = averageLastNight >= median + 4.0 ? 1.0 : averageLastNight >= median + 4.0 ? 0.3 : 0.0
+        var riskScore = averageLastNight >= median + 4.0 ? 1.0 : averageLastNight >= median + 3.0 ? 0.3 : 0.0
         // If average of last night's respiratory rate is over a certain treshold, then add to risk
-        if medianR + 3 < average(numbers: filteredToLastNightR.map{$0.data}) {
+        #warning("Respiratory Rate needs to be tested further")
+        if medianR + 4 < average(numbers: filteredToLastNightR.map{$0.data}) {
             riskScore += 0.2
         }
         // Populates explaination depending on severity of risk
@@ -273,7 +273,7 @@ class Health: ObservableObject {
                                                        LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
                                                            Today()
                                                                .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
-                                                               .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick")
+                                                               .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick, please consult your doctor")
                                                        }
                                          
                                            }
