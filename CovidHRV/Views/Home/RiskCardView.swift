@@ -39,7 +39,7 @@ struct RiskCardView: View {
                 }
             }
             
-        HalvedCircularBar(progress: $health.risk.risk, min: $min, max: $max)
+            HalvedCircularBar(progress: $health.risk.risk, health: health, min: $min, max: $max)
                
             
                 
@@ -89,6 +89,7 @@ import SwiftUI
 struct HalvedCircularBar: View {
     
     @Binding var progress: CGFloat
+    @ObservedObject var health: Health
     @Binding var min: CGFloat
     @Binding var max: CGFloat
     var body: some View {
@@ -98,7 +99,7 @@ struct HalvedCircularBar: View {
                 
                 RoundedRectangle(cornerRadius: 10)
                     .trim(from: 0.0, to: 1.0)
-                    .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
+                    .foregroundColor(Color(health.risk.risk > 0.8 ? "red" : "green"))
                     //.stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
                     .opacity(0.8)
                     .frame( height: 125)
@@ -110,7 +111,7 @@ struct HalvedCircularBar: View {
 //                    .frame(width: 200, height: 200)
 //                    .rotationEffect(Angle(degrees: -215))
                
-                Text(progress == 21 ? "Not Enough Data" : progress > 0.5 ? "WARNING" : "OK")
+                Text(health.risk.risk == 21 ? "Not Enough Data" : health.risk.risk > 0.5 ? "WARNING" : "OK")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
                    // .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
                     .foregroundColor(.white)
@@ -134,7 +135,7 @@ struct HalvedCircularBar: View {
                
             }
             } else {
-                Text(progress == 21 ? "Not Enough Data" : "\(Int((self.progress)*100))%")
+                Text(health.risk.risk == 21 ? "Not Enough Data" : "\(Int((self.health.risk.risk)*100))%")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
                     .foregroundColor(Color("blue"))
                     .frame( height: 125)

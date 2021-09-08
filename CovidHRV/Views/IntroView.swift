@@ -46,7 +46,7 @@ struct IntroView: View {
                 .padding()
                 .padding()
                 .padding()
-                .scaleEffect(pulse ? 1.3 : 1.0)
+                .scaleEffect(pulse ? 1.1 : 1.0)
             if animate2 {
                
             Text("Vito")

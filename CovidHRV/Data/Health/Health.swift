@@ -12,6 +12,8 @@ import Combine
 import HKCombine
 
 class Health: ObservableObject {
+   
+    
     @Published var codableRisk = [CodableRisk(id: UUID().uuidString, date: Date(), risk: 0.0, explanation: [String]())]
     @Published var healthStore = HKHealthStore()
     @Published var risk = Risk(id: "", risk: 21, explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Explain it here!!"), Explanation(image: .questionmarkCircle, explanation: "Explain it here?"), Explanation(image: .circle, explanation: "Explain it here.")])
@@ -29,14 +31,14 @@ class Health: ObservableObject {
     init() {
         // Enables background delivery and queries healthdata
         // Fires daily
-        backgroundDelivery()
-     
+      //  backgroundDelivery()
+     print("INIT FIRED")
         
     }
     func backgroundDelivery() {
         let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
         #warning("change to daily")
-        healthStore.enableBackgroundDelivery(for: readType2!, frequency: .immediate) { success, error in
+        healthStore.enableBackgroundDelivery(for: readType2!, frequency: .daily) { success, error in
             if !success {
                 print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
             } else {
@@ -47,10 +49,12 @@ class Health: ObservableObject {
                   value: -3,
                   to: Date())
               // Queries active energy to determine when the user is alseep
+                    self.healthData = []
                     self.getActiveEnergyHealthData(startDate: earlyDate ?? Date(), endDate: Date())
  
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 // loops thru the active energy data
+                   
                 for data in self.healthData {
                     // Gets dates 5 minutes before and after the start date of low active energy
                     let earlyDate = Calendar.current.date(
@@ -242,6 +246,9 @@ class Health: ObservableObject {
         print(filteredToLastNight)
         print( average(numbers: filteredToLastNight.map{$0.data}))
         // Calculate risk
+        if median != 21 {
+            
+        
         let averageLastNight = average(numbers: filteredToLastNight.map{$0.data})
         var riskScore = averageLastNight >= median + 4.0 ? 1.0 : averageLastNight >= median + 3.0 ? 0.3 : 0.0
         // If average of last night's respiratory rate is over a certain treshold, then add to risk
@@ -255,7 +262,7 @@ class Health: ObservableObject {
     let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
   
     #warning("maybe increase")
-    if averagePerNights.count > 5 && filteredToLastNight.count > 5 {
+    if averagePerNights.count > 0 && filteredToLastNight.count > 0 {
     withAnimation(.easeOut(duration: 1.3)) {
     // Populate risk var with local risk var
     self.risk = risk
@@ -289,8 +296,10 @@ class Health: ObservableObject {
         self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
     
     }
+        } else {
+            self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
+        }
     }
-   
 
    // Gets average of input and outputs
     func average(numbers: [Double]) -> Double {

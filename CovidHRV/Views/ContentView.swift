@@ -15,6 +15,7 @@ struct ContentView: View {
     @State var share = false
     @State var intro = true
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
+    @Environment(\.scenePhase) var scenePhase
     var body: some View {
         ZStack {
             Color.clear
@@ -25,6 +26,12 @@ struct ContentView: View {
                         }
                     }
                 }
+                .onChange(of: scenePhase) { value in
+                    if value == .active {
+                    health.backgroundDelivery()
+                    print("FIRED")
+                }
+                }
             
         
         if !onboarding {
@@ -34,9 +41,8 @@ struct ContentView: View {
             if !intro {
         HomeView(health: health)//, ml: ml)
                 .transition(.opacity)
-                .onAppear() {
-                   
-                }
+               
+               
             .onAppear() {
 //                do {
 //                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
