@@ -20,7 +20,7 @@ struct ContentView: View {
         ZStack {
             Color.clear
                 .onAppear() {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) {
                         withAnimation(.easeInOut(duration: 2.0)) {
                     intro = false
                         }
@@ -28,8 +28,14 @@ struct ContentView: View {
                 }
                 .onChange(of: scenePhase) { value in
                     if value == .active {
+                        intro = true
                     health.backgroundDelivery()
                     print("FIRED")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) {
+                            withAnimation(.easeInOut(duration: 2.0)) {
+                        intro = false
+                            }
+                        }
                 }
                 }
             
@@ -105,7 +111,7 @@ struct ContentView: View {
                 //}
                
             }
-            .onChange(of: health.risk) { value in
+            .onChange(of: health.codableRisk) { value in
                 
                 let encoder = JSONEncoder()
                 if let encoded = try? encoder.encode(health.codableRisk) {

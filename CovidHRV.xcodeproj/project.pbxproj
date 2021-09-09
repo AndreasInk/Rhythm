@@ -944,7 +944,7 @@
 				INFOPLIST_FILE = CovidHRV/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Rhythm;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "To compare data";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To track Parkinson's";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To gain insights into health data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -980,7 +980,7 @@
 				INFOPLIST_FILE = CovidHRV/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Rhythm;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "To compare data";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To track Parkinson's";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To gain insights into health data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
