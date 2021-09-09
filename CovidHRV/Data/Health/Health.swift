@@ -28,12 +28,37 @@ class Health: ObservableObject {
     let calorieQuantity = HKUnit(from: "cal")
     let heartrateQuantity = HKUnit(from: "count/min")
       
+    @Published var queryDate = Query(id: "", durationType: .Day, duration: 1, anchorDate: Date())
+    
     init() {
-        // Enables background delivery and queries healthdata
-        // Fires daily
-      //  backgroundDelivery()
-     print("INIT FIRED")
         
+        getCodableRisk()
+        
+    }
+    func getCodableRisk() {
+        let url3 = getDocumentsDirectory().appendingPathComponent("risk.txt")
+        do {
+            
+            let input = try String(contentsOf: url3)
+            
+            
+            let jsonData = Data(input.utf8)
+            do {
+                let decoder = JSONDecoder()
+                
+                do {
+                    let codableRisk = try decoder.decode([CodableRisk].self, from: jsonData)
+                    
+                    self.codableRisk = codableRisk
+                    
+                 
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        } catch {
+            
+        }
     }
     func backgroundDelivery() {
         let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
@@ -263,11 +288,11 @@ class Health: ObservableObject {
   
     #warning("maybe increase")
     if averagePerNights.count > 0 && filteredToLastNight.count > 0 {
-    withAnimation(.easeOut(duration: 1.3)) {
-    // Populate risk var with local risk var
-    self.risk = risk
-        
-    }
+        withAnimation(.easeOut(duration: 1.3)) {
+        // Populate risk var with local risk var
+        self.risk = risk
+            
+        }
       
         let riskScore = risk.risk
             if  riskScore > 0.5 && riskScore != 21.0 {

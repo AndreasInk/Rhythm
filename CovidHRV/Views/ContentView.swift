@@ -38,6 +38,27 @@ struct ContentView: View {
                         }
                 }
                 }
+                .onChange(of: health.codableRisk) { value in
+                   
+                    let encoder = JSONEncoder()
+                    if let encoded = try? encoder.encode(health.codableRisk) {
+                        if let json = String(data: encoded, encoding: .utf8) {
+                          
+                            do {
+                                let url = health.getDocumentsDirectory().appendingPathComponent("risk.txt")
+                                try json.write(to: url, atomically: false, encoding: String.Encoding.utf8)
+                                
+                            } catch {
+                                print("erorr")
+                            }
+                        }
+                        
+                        
+                    }
+    //                ml.exportDataToCSV(data: health.healthData) { _ in
+    //                    share = true
+    //                }
+                }
             
         
         if !onboarding {
@@ -48,7 +69,7 @@ struct ContentView: View {
         HomeView(health: health)//, ml: ml)
                 .transition(.opacity)
                
-               
+                
             .onAppear() {
 //                do {
 //                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
@@ -111,27 +132,7 @@ struct ContentView: View {
                 //}
                
             }
-            .onChange(of: health.codableRisk) { value in
-                
-                let encoder = JSONEncoder()
-                if let encoded = try? encoder.encode(health.codableRisk) {
-                    if let json = String(data: encoded, encoding: .utf8) {
-                      
-                        do {
-                            let url = health.getDocumentsDirectory().appendingPathComponent("risk.txt")
-                            try json.write(to: url, atomically: false, encoding: String.Encoding.utf8)
-                            
-                        } catch {
-                            print("erorr")
-                        }
-                    }
-                    
-                    
-                }
-//                ml.exportDataToCSV(data: health.healthData) { _ in
-//                    share = true
-//                }
-            }
+          
             .sheet(isPresented: $share) {
                // ShareSheet(activityItems: [ml.getDocumentsDirectory().appendingPathComponent("A.csv")])
                 

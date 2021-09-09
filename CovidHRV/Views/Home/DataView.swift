@@ -6,7 +6,7 @@
 ////
 //
 import SwiftUI
-
+import HealthKit
 struct DataView: View {
     @State private var date = Date()
     @State private var average = 0.0
@@ -16,92 +16,92 @@ struct DataView: View {
         
         VStack {
             HStack {
-                Text("Average: " + String(average))
+                Text("Average Heart Rate: " + String(average))
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.leading)
                     .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
-                DatePicker("", selection: $date, displayedComponents: .date)
+                DatePicker("", selection: $health.queryDate.anchorDate, displayedComponents: .date)
+                    .font(.custom("Poppins", size: 12, relativeTo: .headline))
                 .datePickerStyle(CompactDatePickerStyle())
                 .padding()
                 .onAppear() {
-                    loadData  { (score) in
-                        average = health.average(numbers: health.codableRisk.map{Double($0.risk)})
-                        
-                    }
-                    let maximum =  ChartData(values: [("", 0.0)])
-                    let filtered2 = data.points.filter { word in
-                        return word.0 != "NA"
-                    }
-                   
-                    let average2 = health.average(numbers: filtered2.map {$0.1})
-                    let minScore = filtered2.map {$0.1}.max()
-                    let filtered = filtered2.filter { word in
-                        return word.1 == minScore
-                    }
+                  //  health.queryDate.anchorDate = date
+                    let points = getHeartRateDataAsDoubleArr()
+                    average = health.average(numbers: points)
+                    data.points = points.map{("", $0)}
                     
-                    if average2.isNormal {
-                        maximum.points.append((String("Average"), average2))
-                        maximum.points.append((String(filtered.last?.0 ?? "") , filtered.last?.1 ?? 0.0))
-
-                    }
 
                 }
             
             }
+            HStack {
+                TextField("Duration", value: $health.queryDate.duration, formatter: NumberFormatter())
+                    .keyboardType(.numberPad)
+                    .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
+                    .onChange(of: health.queryDate.duration) { value in
+                       
+                            let points = getHeartRateDataAsDoubleArr()
+                            average = health.average(numbers: points)
+                        data.points = points.map{("", $0)}
+                    }
+                ForEach(DurationType.allCases, id: \.self) { value in
+                    Button(action: {
+                        withAnimation(.easeInOut) {
+                        health.queryDate.durationType = value
+                            let points = getHeartRateDataAsDoubleArr()
+                            average = health.average(numbers: points)
+                        data.points = points.map{("", $0)}
+                            print(data.points)
+                        }
+                    }) {
+                        Text(value.rawValue)
+                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
+                            .foregroundColor(value == health.queryDate.durationType ?  .white : .blue)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 10).foregroundColor(value == health.queryDate.durationType ?  .blue : .white))
+                            .scaleEffect(value == health.queryDate.durationType ? 1.1 : 1)
+                    }
+                }
+               
+            }
+        
                 //.opacity(isTutorial ? (tutorialNum == 1 ? 1.0 : 0.1) : 1.0)
-                .onChange(of: date, perform: { value in
+            .onChange(of: health.queryDate.anchorDate, perform: { value in
                     
-                    //refresh = true
-                    loadData  { (score) in
-                        average = health.average(numbers: health.codableRisk.map{Double($0.risk)})
-                        
-                    }
-                    let maximum =  ChartData(values: [("", 0.0)])
-                   
-                    let filtered2 = data.points.filter { word in
-                        return word.0 != "NA"
-                    }
-                   
-                    let average2 = health.average(numbers: filtered2.map {$0.1})
-                    let minScore = filtered2.map {$0.1}.max()
-                    let filtered = filtered2.filter { word in
-                        return word.1 == minScore
-                    }
+                let points = getHeartRateDataAsDoubleArr()
+                average = health.average(numbers: points)
+                    data.points = points.map{("", $0)}
                     
-                    if average2.isNormal {
-                        maximum.points.append((String("Average"), average2))
-                        maximum.points.append((String(filtered.last?.0 ?? "") , filtered.last?.1 ?? 0.0))
-                     
-                    }
+                  
                 })
             HStack {
-                Text("Total Score")
+                Text("Score")
                     .font(.custom("Poppins-Bold", size: 24, relativeTo: .headline))
                 Spacer()
             }  //.opacity(isTutorial ? (tutorialNum == 2 ? 1.0 : 0.1) : 1.0)
             
                 
-           // BarChartView(data: $data, title: "Covid Risk Score")
-//            Text("1 indicates poorer health while a 0 indicates a healthier condition")
-//                .fixedSize(horizontal: false, vertical: true)
-//                .multilineTextAlignment(.leading)
-//                .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
-                //.opacity(isTutorial ? (tutorialNum == 2 ? 1.0 : 0.1) : 1.0)
-            
-//            if max.points.last?.1 != max.points.first?.1 {
-//                DayChartView(title: "Score", chartData: $max, refresh: $refresh, dataTypes: $dataTypes, userData: $userData)
-//                Text(maxText)
-//                    .multilineTextAlignment(.leading)
-//                    .fixedSize(horizontal: false, vertical: true)
-//                    .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
-//            }
-            
+            BarChartView(data: $data, title: "Heart Rate")
+
            
             Spacer()
         } .padding()
            
         }
-    
+    func getHeartRateDataAsDoubleArr() -> [Double] {
+        
+        return health.healthData.filter{$0.title == HKQuantityTypeIdentifier.heartRate.rawValue && getDateRange(query: health.queryDate, date: $0.date) }.map{$0.data}
+    }
+                                                                    
+    func getDateRange(query: Query, date: Date) -> Bool {
+        var isWithinTimePeriod = false
+        let scaledDuration = query.durationType == .Week ? query.duration * 86400 * 7 : query.durationType == .Month ? query.duration  * 86400 * 30 : query.durationType == .Year ? query.duration  * 86400 * 365 : 86400 * query.duration
+        let range = query.anchorDate.addingTimeInterval(-scaledDuration)...query.anchorDate
+        if range.contains(date) {
+            isWithinTimePeriod = true
+        }
+                    return isWithinTimePeriod
+                }
     func loadData( completionHandler: @escaping (String) -> Void) {
        
         data = ChartData(values: [("", 0.0)])

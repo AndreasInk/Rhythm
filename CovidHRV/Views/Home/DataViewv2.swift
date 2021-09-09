@@ -10,6 +10,7 @@ import SwiftUI
 struct DataViewv2: View {
     @Environment(\.calendar) var calendar
     @ObservedObject var health: Health
+   
     private var year: DateInterval {
         calendar.dateInterval(of: .year, for: Date())!
      }
@@ -18,7 +19,7 @@ struct DataViewv2: View {
         
         HStack {
             
-                CalendarView(interval: year) { date in
+            CalendarView(health: health, interval: year) { date in
                       Text(String(self.calendar.component(.day, from: date)))
                         .frame(width: 40, height: 40, alignment: .center)
                         .background(Color((health.codableRisk.filter{$0.date.get(.day) == date.get(.day) && $0.date.get(.month) == date.get(.month) }.last?.id.isEmpty ?? true) ? "blue" : ((health.codableRisk.filter{$0.date.get(.day) == date.get(.day)}.last?.risk ?? 0) > 0.5 ? "red" : "green")))
