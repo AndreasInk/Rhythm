@@ -26,7 +26,7 @@ struct DataView: View {
                 .padding()
                 .onAppear() {
                   //  health.queryDate.anchorDate = date
-                    let points = getHeartRateData()
+                    let points = getHeartRateData().filter{!$0.data.isNaN}
                     average = health.average(numbers: points.map{$0.data}.filter{!$0.isNaN})
                     data.points = points.map{($0.title, $0.data)}
                     
@@ -50,7 +50,7 @@ struct DataView: View {
                     Button(action: {
                         withAnimation(.easeInOut) {
                         health.queryDate.durationType = value
-                            let points = getHeartRateData()
+                            let points = getHeartRateData().filter{!$0.data.isNaN}
                             average = health.average(numbers: points.map{$0.data}.filter{!$0.isNaN})
                             data.points = points.map{($0.title, $0.data)}
                             
@@ -72,7 +72,7 @@ struct DataView: View {
                 //.opacity(isTutorial ? (tutorialNum == 1 ? 1.0 : 0.1) : 1.0)
             .onChange(of: health.queryDate.anchorDate, perform: { value in
                     
-                let points = getHeartRateData()
+                let points = getHeartRateData().filter{!$0.data.isNaN}
                 average = health.average(numbers: points.map{$0.data}.filter{!$0.isNaN})
                 data.points = points.map{($0.title, $0.data)}
                     
@@ -94,9 +94,9 @@ struct DataView: View {
         }
     func getHeartRateData() -> [HealthData] {
         
-        return groupByDay(durationType: health.queryDate.durationType, data: health.healthData.filter{$0.title == HKQuantityTypeIdentifier.heartRate.rawValue && getDateRange(query: health.queryDate, date: $0.date) })
+        return health.queryDate.durationType == .Week ? groupByWeek(query: health.queryDate, data: health.healthData.filter{$0.title == HKQuantityTypeIdentifier.heartRate.rawValue && getDateRange(query: health.queryDate, date: $0.date) }) : groupByDay(query: health.queryDate, data: health.healthData.filter{$0.title == HKQuantityTypeIdentifier.heartRate.rawValue && getDateRange(query: health.queryDate, date: $0.date) })
     }
-    func groupByDay(durationType: DurationType, data: [HealthData]) -> [HealthData] {
+    func groupByDay(query: Query, data: [HealthData]) -> [HealthData] {
         
         var healthData =  [HealthData]()
         for month in health.months {
@@ -106,9 +106,29 @@ struct DataView: View {
             let filteredToDay = data.filter {
                 return $0.date.get(.day) == day &&  $0.date.get(.month) == month.get(.month)
             }
-           
+                let filteredTo = query.durationType == .Week ? filteredToDay.filter{$0.date.get(.weekOfYear) == query.anchorDate.get(.weekOfYear)}.filter{!$0.data.isNaN}.map{$0.data} : filteredToDay.filter{!$0.data.isNaN}.map{$0.data}
             // Get average for that day
-            healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: String(day), text: "", date: month, data: health.average(numbers: filteredToDay.map{$0.data})))
+                healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: String(day), text: "", date: month, data: health.average(numbers: filteredTo)))
+          
+        }
+        }
+            return healthData
+        
+        
+    }
+    func groupByWeek(query: Query, data: [HealthData]) -> [HealthData] {
+        
+        var healthData =  [HealthData]()
+        for month in health.months {
+            
+            for day in  0...7 {
+            // Filter to day and to month that's not today
+            let filteredToDay = data.filter {
+                return $0.date.get(.day) == day &&  $0.date.get(.month) == month.get(.month) &&  $0.date.get(.weekOfYear) == month.get(.weekOfYear)
+            }
+                let filteredTo = query.durationType == .Week ? filteredToDay.filter{$0.date.get(.weekOfYear) == query.anchorDate.get(.weekOfYear)}.filter{!$0.data.isNaN}.map{$0.data} : filteredToDay.filter{!$0.data.isNaN}.map{$0.data}
+            // Get average for that day
+                healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: "\(DayOfWeek(rawValue: day) ?? .Monday)", text: "", date: month, data: health.average(numbers: filteredTo)))
           
         }
         }
