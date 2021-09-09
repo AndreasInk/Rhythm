@@ -16,7 +16,7 @@ struct DataView: View {
         
         VStack {
             HStack {
-                Text("Average Heart Rate: " + String(average))
+                Text("Average Heart Rate: " + String(round(average * 10) / 10.0))
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.leading)
                     .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
@@ -124,9 +124,9 @@ struct DataView: View {
             for day in  0...7 {
             // Filter to day and to month that's not today
             let filteredToDay = data.filter {
-                return $0.date.get(.day) == day &&  $0.date.get(.month) == month.get(.month) &&  $0.date.get(.weekOfYear) == month.get(.weekOfYear)
+                return $0.date.get(.weekday) == day &&  $0.date.get(.month) == month.get(.month) &&  $0.date.get(.weekOfYear) == month.get(.weekOfYear)
             }
-                let filteredTo = query.durationType == .Week ? filteredToDay.filter{$0.date.get(.weekOfYear) == query.anchorDate.get(.weekOfYear)}.filter{!$0.data.isNaN}.map{$0.data} : filteredToDay.filter{!$0.data.isNaN}.map{$0.data}
+                let filteredTo = filteredToDay.filter{$0.date.get(.weekOfYear) == query.anchorDate.get(.weekOfYear)}.filter{!$0.data.isNaN}.map{$0.data}
             // Get average for that day
                 healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: "\(DayOfWeek(rawValue: day) ?? .Monday)", text: "", date: month, data: health.average(numbers: filteredTo)))
           
@@ -156,7 +156,7 @@ struct DataView: View {
         print(filtered)
         let scorePoints = ChartData(values: [("", 0.0)])
         
-        for day in 1...7 {
+        for day in 0...7 {
             
        
             let filteredDay = filtered.filter { data in
