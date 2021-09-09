@@ -216,7 +216,7 @@ class Health: ObservableObject {
     // Gets all months
     @Environment(\.calendar) var calendar
     let interval = DateInterval()
-    private var months: [Date] {
+     var months: [Date] {
         calendar.generateDates(
             inside: interval,
             matching: DateComponents(day: 1, hour: 0, minute: 0, second: 0)

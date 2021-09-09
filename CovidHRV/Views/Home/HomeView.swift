@@ -7,7 +7,7 @@
 
 import SwiftUI
 import HealthKit
-import TabularData
+//import TabularData
 import CoreML
 
 struct HomeView: View {

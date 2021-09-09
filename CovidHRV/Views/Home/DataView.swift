@@ -26,41 +26,45 @@ struct DataView: View {
                 .padding()
                 .onAppear() {
                   //  health.queryDate.anchorDate = date
-                    let points = getHeartRateDataAsDoubleArr()
-                    average = health.average(numbers: points)
-                    data.points = points.map{("", $0)}
+                    let points = getHeartRateData()
+                    average = health.average(numbers: points.map{$0.data}.filter{!$0.isNaN})
+                    data.points = points.map{($0.title, $0.data)}
                     
 
                 }
             
             }
             HStack {
-                TextField("Duration", value: $health.queryDate.duration, formatter: NumberFormatter())
-                    .keyboardType(.numberPad)
-                    .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
-                    .onChange(of: health.queryDate.duration) { value in
-                       
-                            let points = getHeartRateDataAsDoubleArr()
-                            average = health.average(numbers: points)
-                        data.points = points.map{("", $0)}
-                    }
+                Spacer()
+//                TextField("Duration", value: $health.queryDate.duration, formatter: NumberFormatter())
+//                    .keyboardType(.numberPad)
+//                    .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
+//                    .onChange(of: health.queryDate.duration) { value in
+//
+//                            let points = getHeartRateDataAsDoubleArr()
+//                            average = health.average(numbers: points)
+//                            data.points = points.map{("", $0)}
+//                    }
                 ForEach(DurationType.allCases, id: \.self) { value in
+                    if value != .Year {
                     Button(action: {
                         withAnimation(.easeInOut) {
                         health.queryDate.durationType = value
-                            let points = getHeartRateDataAsDoubleArr()
-                            average = health.average(numbers: points)
-                        data.points = points.map{("", $0)}
+                            let points = getHeartRateData()
+                            average = health.average(numbers: points.map{$0.data}.filter{!$0.isNaN})
+                            data.points = points.map{($0.title, $0.data)}
+                            
                             print(data.points)
                         }
                     }) {
                         Text(value.rawValue)
-                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
+                            .font(.custom("Poppins", size: 12, relativeTo: .subheadline))
                             .foregroundColor(value == health.queryDate.durationType ?  .white : .blue)
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 10).foregroundColor(value == health.queryDate.durationType ?  .blue : .white))
-                            .scaleEffect(value == health.queryDate.durationType ? 1.1 : 1)
+                            //.scaleEffect(value == health.queryDate.durationType ? 1.1 : 1)
                     }
+                }
                 }
                
             }
@@ -68,14 +72,14 @@ struct DataView: View {
                 //.opacity(isTutorial ? (tutorialNum == 1 ? 1.0 : 0.1) : 1.0)
             .onChange(of: health.queryDate.anchorDate, perform: { value in
                     
-                let points = getHeartRateDataAsDoubleArr()
-                average = health.average(numbers: points)
-                    data.points = points.map{("", $0)}
+                let points = getHeartRateData()
+                average = health.average(numbers: points.map{$0.data}.filter{!$0.isNaN})
+                data.points = points.map{($0.title, $0.data)}
                     
                   
                 })
             HStack {
-                Text("Score")
+                Text("Heart Rate")
                     .font(.custom("Poppins-Bold", size: 24, relativeTo: .headline))
                 Spacer()
             }  //.opacity(isTutorial ? (tutorialNum == 2 ? 1.0 : 0.1) : 1.0)
@@ -88,11 +92,30 @@ struct DataView: View {
         } .padding()
            
         }
-    func getHeartRateDataAsDoubleArr() -> [Double] {
+    func getHeartRateData() -> [HealthData] {
         
-        return health.healthData.filter{$0.title == HKQuantityTypeIdentifier.heartRate.rawValue && getDateRange(query: health.queryDate, date: $0.date) }.map{$0.data}
+        return groupByDay(durationType: health.queryDate.durationType, data: health.healthData.filter{$0.title == HKQuantityTypeIdentifier.heartRate.rawValue && getDateRange(query: health.queryDate, date: $0.date) })
     }
-                                                                    
+    func groupByDay(durationType: DurationType, data: [HealthData]) -> [HealthData] {
+        
+        var healthData =  [HealthData]()
+        for month in health.months {
+            
+            for day in  0...32 {
+            // Filter to day and to month that's not today
+            let filteredToDay = data.filter {
+                return $0.date.get(.day) == day &&  $0.date.get(.month) == month.get(.month)
+            }
+           
+            // Get average for that day
+            healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: String(day), text: "", date: month, data: health.average(numbers: filteredToDay.map{$0.data})))
+          
+        }
+        }
+            return healthData
+        
+        
+    }
     func getDateRange(query: Query, date: Date) -> Bool {
         var isWithinTimePeriod = false
         let scaledDuration = query.durationType == .Week ? query.duration * 86400 * 7 : query.durationType == .Month ? query.duration  * 86400 * 30 : query.durationType == .Year ? query.duration  * 86400 * 365 : 86400 * query.duration
@@ -100,7 +123,7 @@ struct DataView: View {
         if range.contains(date) {
             isWithinTimePeriod = true
         }
-                    return isWithinTimePeriod
+                return isWithinTimePeriod
                 }
     func loadData( completionHandler: @escaping (String) -> Void) {
        
